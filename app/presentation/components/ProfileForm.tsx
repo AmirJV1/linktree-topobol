@@ -50,7 +50,16 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialData, onSubmit,
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            const newData = { ...prev, [name]: value };
+            if (name === 'fullName') {
+                newData.slug = value.toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9\s-]/g, "")
+                    .trim().replace(/\s+/g, "-");
+            }
+            return newData;
+        });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
